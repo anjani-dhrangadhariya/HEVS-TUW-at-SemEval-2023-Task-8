@@ -51,9 +51,10 @@
 %         Author 3 \\ Address line \\ ... \\ Address line}
 
 
-\author{Anjani Dhrangadhariya\hspace{1pt}$^{{{\bf 1}}\dag}$ \hspace{.7cm} Wojciech Kusa\hspace{1pt}$^{{\bf 2}\dag}$ \\[0.15cm] {\bf Henning Müller\hspace{1pt}$^{{\bf 1}}$}  \hspace{.7cm}  {\bf Allan Hanbury\hspace{1pt}$^{{\bf 2}}$}
+\author{Anjani Dhrangadhariya\hspace{1pt}$^{{{\bf 1,2}}\dag}$ \hspace{.7cm} Wojciech Kusa\hspace{1pt}$^{{\bf 3}\dag}$ \\[0.15cm] {\bf Henning Müller\hspace{1pt}$^{{\bf 1,2}}$}  \hspace{.7cm}  {\bf Allan Hanbury\hspace{1pt}$^{{\bf 3}}$}
 \\[0.4cm]
 {$^1$University of Geneva, Geneva, Switzerland} \\
+{$^2$HES-SO Valais-Wallis, Sierre, Switzerland} \\
 {\tt \{anjani.dhrangadhariya,henning.mueller\}@hevs.ch} \\
 {$^2$TU Wien, Vienna, Austria} \\
 {\tt \{wojciech.kusa,allan.hanbury\}@tuwien.ac.at} \\
@@ -171,13 +172,14 @@ Post transformation, both transformer + word features and CNN transformed featur
 %
 \section{Experimental setup}
 In this section we describe our experimental setup for Subtasks (1) and (2). 
-
+%
+%
+%
 % How data splits (train/dev/test) are used.
 % Key details about preprocessing, hyperparameter tuning, etc. that a reader would need to know to replicate your experiments. If space is limited, some of the details can go in an Appendix.
 % External tools/libraries used, preferably with version number and URL in a footnote.
 % Summarize the evaluation measures used in the task.
 % You do not need to devote much—if any—space to discussing the organization of your code or file formats.
-
 \subsection{Subtask 1}
 
 We train all transformer based models for 30 epochs. 
@@ -202,7 +204,7 @@ Runs are evaluated using macro F1-score measure.
 
 
 \subsection{Subtask 2}
-
+\label{exps:task2}
 Three separate training experiments were carried out for each PIO class.
 
 
