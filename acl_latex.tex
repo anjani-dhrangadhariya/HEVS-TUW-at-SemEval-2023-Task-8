@@ -53,7 +53,7 @@
 
 \author{Anjani Dhrangadhariya\hspace{1pt}$^{{{\bf 1}}\dag}$ \hspace{.7cm} Wojciech Kusa\hspace{1pt}$^{{\bf 2}\dag}$ \\[0.15cm] {\bf Henning Müller\hspace{1pt}$^{{\bf 1}}$}  \hspace{.7cm}  {\bf Allan Hanbury\hspace{1pt}$^{{\bf 2}}$}
 \\[0.4cm]
-{$^1$University of Geneva, University of Geneva} \\
+{$^1$University of Geneva, Geneva, Switzerland} \\
 {\tt \{anjani.dhrangadhariya,henning.mueller\}@hevs.ch} \\
 {$^2$TU Wien, Vienna, Austria} \\
 {\tt \{wojciech.kusa,allan.hanbury\}@tuwien.ac.at} \\
@@ -75,9 +75,13 @@ Our results for Subtask 1 show moderate benefit from ensembling models pretraine
 
 \section{Introduction}
 
-Identification and verification of causal claims from unstructured text data is an important task for various decision-making processes, particularly in the field of healthcare. The SemEval-2023 Task 8~\cite{CausalClaims} aims to advance the state-of-the-art in this area by focusing on two subtasks: causal claim identification and PIO frame extraction.
+% 
+Identification and verification of causal claims from unstructured text data is an important task for various decision-making processes, particularly in the field of healthcare. The SemEval-2023 Task 8~\cite{CausalClaims} aims to advance the state-of-the-art in this area by focusing on two subtasks: identification of causal claims and extraction of Population, Intervention, and Outcome (PIO) entities.
 
-The first subtask involves identifying the span of text that contains a causal claim, experience, experience based claim or a question in a given text snippet. This can be done at sentence level, but it is possible that only a part of a sentence is annotated with one of these categories. The second subtask involves extracting the Population, Intervention, and Outcome (PIO) frame related to the identified causal claim in a given text snippet.
+% 
+The first subtask involves identifying the span of text that contains one of the four entities: a \emph{causal claim}, a \emph{personal experience}, a \emph{personal experience based on a claim} or a \emph{question}. 
+This can be done at sentence level, but it is possible that only a part of a sentence is annotated with one of these categories. 
+The second subtask involves extracting the PIO frame related to the identified causal claim in a given text snippet.
 
 These subtasks have potential applications in content moderation, insurance claim identification, and hypothesis generation from clinical notes. We believe that the shared task will motivate further research in this direction and lead to the development of more effective and accurate methods for causal claim identification and PIO frame extraction.
 
@@ -89,9 +93,9 @@ The task of identifying causal claims and extracting the associated PIO frame fr
 
 Manual extraction of causal claims and PIO frames from such data is a time-consuming and error-prone process. Therefore, there is a growing interest in developing automated methods that can identify and extract such information with high accuracy.
 
-Previous research in this area has primarily focused on developing rule-based and machine learning-based approaches for causal claim identification and PIO frame extraction. Rule-based methods involve defining patterns or rules that capture the syntactic and semantic properties of causal claims and PIO frames. Machine learning-based methods, on the other hand, involve training models on annotated datasets to learn the features that are indicative of causal claims and PIO frames.
 %Anjani
-Previous studies on extracting PIO (Problem, Intervention, Outcome) frames primarily concentrated on extracting them from well-written, peer-reviewed literature. However, the SemEval-2023 causal claims task aims to overcome the difficulty of extracting these frames from noisy Reddit data.
+Previous studies on extracting PIO frames primarily concentrated on extracting them from well-written, peer-reviewed literature especially after the release of EBM-PICO corpus.~\cite{nye2018corpus}
+However, the SemEval-2023 causal claims task aims to overtakes the challenges of extracting these frames from noisy Reddit data.~\cite{brockmeier2019improving,dhrangadhariya2021end}
 
 While these methods have shown promising results, there is still room for improvement in terms of accuracy and efficiency. The SemEval-2023 Task 8 provides an opportunity for researchers to develop novel methods for causal claim identification and PIO frame extraction and to benchmark their performance against state-of-the-art methods. We hope that the shared task will lead to the development of more effective and accurate methods for identifying and extracting causal claims and PIO frames from unstructured text data.
 
@@ -114,8 +118,9 @@ We treat the task 1 as a named entity recognition task.
 \subsubsection*{Question detector}
 
 
-We design a weakly supervised question detector model (QD).
-We use a spacy sentencizer
+We design a weakly supervised question detector approach (QD).
+We use a spaCy sentencizer to split the text into sentences.
+Next we search for the occurrences of the question mark token `?'. 
 
 
 % 2. weakly questions: st1\_test\_predictions.csv (different folder)
@@ -137,8 +142,23 @@ The three last models are trained
 
 
 
-
+%
+%
+%
 \subsection{Subtask 2}
+\label{system:task2}
+%
+PIO extraction was planned as a two-part system: First part combined a text preprocessing and enriching module, and the second part was an end-to-end deep learning entity extraction pipeline.
+Explain the preprocessing steps here: removing trailing spaces, lower casing, etc. %Anjani
+After preprocessing, text tokens were enriched with the part-of-the-speech tags and token lemmas using spaCy~\footnote{https://spacy.io/}. 
+
+
+The end-to-end deep learning system was built on combining the feature extractors (contextual, word-level and character-level) combined with a learning component.
+Transformer models, specifically RoBERTa and BioMed-RoBERTa, were employed to extract contextual features from each sample.
+The word-level features are 30-dimensional vectors comprising POS tags generated by spaCy. 
+Character orthographic features encapsulate capitalization, punctuation, word shape, and other orthographic features; e.g., "SemEval 2023!" encodes as "CccCccc nnnnp". 
+A character-level token encoding is 28 dimensions, with a maximum token length of 20 characters applying post-padding on shorter words and truncating the longer ones.
+
 
 
 \section{Experimental setup}
@@ -175,9 +195,7 @@ Runs are evaluated using macro F1-score measure.
 
 \subsection{Subtask 2}
 
-PIO extraction was planned as an end-to-end deep learing based entity extraction pipeline.
-Explain the preprocessing steps here: POS tags addition, lemma addition, ortho features, character features.
-Explain the components of the deep learning system. 1) transformers 2) lstm 3) CNN 4) linear or fully-connected layer 5) Global average pooling and max pooling
+
 
 
 
