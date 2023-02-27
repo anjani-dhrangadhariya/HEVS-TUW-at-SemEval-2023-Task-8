@@ -150,8 +150,10 @@ The three last models are trained
 \label{system:task2}
 %
 PIO extraction was planned as a two-part system: a text preprocessing module and an end-to-end deep learning entity extraction pipeline.
-Explain the preprocessing steps here: removing trailing spaces, lower casing, etc. %Anjani
+SemEval-2023 PIO dataset comprising 597 samples of which empty or deleted samples were removed leaving 522 samples.
 Next, the text tokens were enriched with the part-of-the-speech (POS) tags and token lemmas using spaCy~\footnote{https://spacy.io/}.
+The dataset was divided into a training (80\%) and test sets (20\%).
+
 
 The end-to-end deep learning system was built on combining the feature extractors (word-level and character-level) followed by a learning component.
 The word-level features included transformer encodings and POS encoding.
@@ -217,14 +219,12 @@ Each experiment was averaged over the three most common random seeds in python, 
 Individual PIO predictions were combined based on majority voting with a random tie break.
 %
 \begin{enumerate}
-    \item Run 1: ( transformer (RoBERTa) $\oplus$ POS (BiLSTM) ) $\oplus$ ( orthographic features - 1D-CNN - fc  ) (linear layrer)
-    \item Run 2: ( transformer (RoBERTa) $\oplus$ POS (one-hot) ) $\oplus$ ( character features - 1D-CNN - fc  ) (linear layrer)
-    \item Run 3: ( transformer (RoBERTa) $\oplus$ POS (one-hot) ) $\oplus$ ( orthographic features - 1D-CNN - fc - GAP ) (linear layrer) 
-    \item Run 4: ( transformer (RoBERTa) $\oplus$ POS (BiLSTM) ) $\oplus$ ( orthographic features - 1D-CNN - fc - GAP ) (linear layrer) 
+    \item Run 1: ( RoBERTa $\oplus$ POS (BiLSTM) ) $\oplus$ ( orthographic features - 1D-CNN - fc  ) (linear layrer)
+    \item Run 2: ( RoBERTa $\oplus$ POS (one-hot) ) $\oplus$ ( character features - 1D-CNN - fc  ) (linear layrer)
+    \item Run 3: ( RoBERTa $\oplus$ POS (one-hot) ) $\oplus$ ( orthographic features - 1D-CNN - fc - GAP ) (linear layrer) 
+    \item Run 4: ( RoBERTa $\oplus$ POS (BiLSTM) ) $\oplus$ ( orthographic features - 1D-CNN - fc - GAP ) (linear layrer) 
     \item Run 5: Ensemble 14 (P), 13 (I) BRoB, 1 (O)   
 \end{enumerate}
-
-
 %
 %
 %
