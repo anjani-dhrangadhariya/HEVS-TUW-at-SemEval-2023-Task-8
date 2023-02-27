@@ -12,6 +12,10 @@
 \usepackage{latexsym}
 \usepackage{booktabs}
 
+%graphics package
+\usepackage{graphicx}
+\graphicspath{ {./figures/} }
+
 % For proper rendering and hyphenation of words containing Latin characters (including in bib files)
 \usepackage[T1]{fontenc}
 % For Vietnamese characters
@@ -135,8 +139,8 @@ We fine-tune five models using training subset of the released trainset:
 \item RoBERTa$_A$ -- RoBERTa model~\cite{Liu2019RoBERTaAR} trained on all entities. % //newstorage5/wkusa/models/pico/ph1-all/roberta/final-model.pt trained for 25 epochs: st1\_test\_flair\_roberta.csv
 \item distilBERT$_A$ -- distilBERT model~\cite{Sanh2019DistilBERTAD} trained on all entities.  %all: all\_flair\_submission.csv
 \item  distilBERT$_q$ --  distilBERT trained on extracting only questions. %$_q$distil question  question\_flair\_submission.csv
-\item distilBERT$_{pe}$ -- distilBERT model traind on personal experience entities %: st1\_test\_flair\_per\_exp.csv
-\item distilBERT$_c$ -- distilBERT model traind on claim entities %: st1\_test\_flair\_per\_exp.csv
+\item distilBERT$_{pe}$ -- distilBERT model trained on personal experience entities %: st1\_test\_flair\_per\_exp.csv
+\item distilBERT$_c$ -- distilBERT model trained on claim entities %: st1\_test\_flair\_per\_exp.csv
 \end{enumerate}
 
 The three last models are trained 
@@ -164,11 +168,22 @@ POS features were either \textbf{one-hot} encoded or transformed using \textbf{B
 Transformer and POS features were concatenated. 
 
 
-\textbf{Orthographic features} encapsulate capitalization, punctuation, word shape, and other orthographic features; e.g., "SemEval 2023!" was encoded as "CccCccc nnnnp". 
-\textbf{Character features} are sparser matrices encapsulating character-level information, including alphabet and individual punctuations.
+
+\textbf{Orthographic features} are the character-based features that encapsulate capitalization, punctuation, word shape, and other orthographic features; e.g., "SemEval 2023!" was encoded as "CccCccc nnnnp". 
+\textbf{Character features} are sparser matrices encapsulating character-level information, including alphabet and individual punctuation.
 An orthographic token encoding was six-dimensional, and character encoding was 28-dimensional, with a maximum token length of 20 characters applying post-padding on shorter words and truncating the longer ones.
 These orthographic and character features were transformed using a 1-dimensional convolutional neural network (\textbf{1D-CNN}) and fed to a fully-connected (\textbf{fc}) layer followed by either max pooling (MAP) or global average pooling (GAP).
-Post transformation, both transformer concatenated word features and CNN-transformed character features were concatenated and fed to a \textbf{linear layer} to predict the entity sequence.
+Post transformation, both  the word-level features and CNN-transformed character features were concatenated and fed to a \textbf{linear layer} to predict the entity sequence.
+
+%Anjani: Include a figure with character and word representations
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/word_arch.pdf}
+    \caption{Word representation using concatenation of the POS embeddings (with or without BiLSTM transformation) and transformer embeddings (yellow).}
+    \label{fig:ann_scheme}
+\end{figure}
+
+
 %
 %
 %
@@ -213,7 +228,7 @@ We do the majority voting for non-null predictions, i.e. whenever at least one m
 \subsection{Subtask 2}
 \label{exps:task2}
 %
-For subtask 2, we submitted four runs, each an ensemble for PIO classes, and with the following architecture whose components are described in Section \ref{sec:system2}.
+For subtask 2, we submitted four runs, each an ensemble for PIO classes, and with the following architecture whose components are described in Section \ref{system:task2}.
 Three separate training experiments were carried out for each PIO class.
 Each experiment was averaged over the three most common random seeds in python, 0,1 and 42.
 Individual PIO predictions were combined based on majority voting with a random tie break.
