@@ -99,29 +99,35 @@ We believe that the shared task will motivate further research in this direction
 \section{Background}
 \label{background}
 %
-The task of identifying causal claims and extracting the associated PIO frame from unstructured text data has received increasing attention in recent years. This is particularly relevant in the healthcare domain, where large amounts of medical notes, research articles, and patient forums are generated on a daily basis.
-
+The task of identifying causal claims and extracting the associated PIO frame from unstructured text data has received increasing attention in recent years.
+This is particularly relevant in the healthcare domain, where large amounts of medical notes, research articles, and patient forums are generated on a daily basis.
 Manual extraction of causal claims and PIO frames from such data is a time-consuming and error-prone process. Therefore, there is a growing interest in developing automated methods that can identify and extract such information with high accuracy.
 
-%Anjani
-Previous studies on extracting PIO frames primarily concentrated on extracting them from well-written, peer-reviewed literature especially after the release of EBM-PICO corpus.~\cite{nye2018corpus}
-However, the SemEval-2023 causal claims task aims to overtakes the challenges of extracting these frames from noisy Reddit data.~\cite{brockmeier2019improving,dhrangadhariya2021end}
+While these methods have shown promising results, there is still room for improvement in terms of accuracy and efficiency.
+The SemEval-2023 Task 8 provides an opportunity for researchers to develop novel methods for causal claim identification and PIO frame extraction and to benchmark their performance against state-of-the-art methods.
+We hope that the shared task will lead to the development of more effective and accurate methods for identifying and extracting causal claims and PIO frames from unstructured text data.
 
-While these methods have shown promising results, there is still room for improvement in terms of accuracy and efficiency. The SemEval-2023 Task 8 provides an opportunity for researchers to develop novel methods for causal claim identification and PIO frame extraction and to benchmark their performance against state-of-the-art methods. We hope that the shared task will lead to the development of more effective and accurate methods for identifying and extracting causal claims and PIO frames from unstructured text data.
-
-
-
-
-
+%Anjani: Background for the PIO extraction task
+For a decade, PIO extraction was limited to sentence-level information extraction due to the unavailability of frame-annotated datasets.~\cite{boudin2010combining,jin2018pico}
+After the release of the EBM-PICO corpus, the extraction efforts moved to span and frame extraction.~\cite{nye2018corpus}
+Nonetheless, previous studies on PIO frame extraction primarily concentrated on extracting them from well-written, peer-reviewed literature.~\cite{brockmeier2019improving,zhang2020unlocking,dhrangadhariya2021end}
+The SemEval-2023 task 8 overtakes the challenge of extracting these frames from noisy social media data.
+The task organizers provide 597, English-language PIO labelled Reddit posts.
+We approach PIO frame extraction as sequence labelling and use a combination of deep learning and rule-based approach that captures multiple feature representations from the data, as the dataset is relatively small.
+%
+%
+%
 \section{System overview}
-
+\label{system_over}
+%
 We participated in both Subtasks of SemEval-2023 Task 8. 
 In this section we describe our approach.
-
+%
+%
+%
 \subsection{Subtask 1} \label{sec:system1}
-
-
-
+\label{subsec:syst_task1}
+%
 For Subtask 1 we implement two components: weakly supervised question detection and a Transformers-based fully supervised entity recogniton.
 We treat the task 1 as a named entity recognition task.
 
