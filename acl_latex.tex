@@ -86,14 +86,19 @@ Identification and verification of causal claims from unstructured text data is 
 % 
 The first subtask involves identifying the span of text that contains one of the four entities: a \emph{causal claim}, a \emph{personal experience}, a \emph{personal experience based on a claim} or a \emph{question}. 
 This can be done at sentence level, but it is possible that only a part of a sentence is annotated with one of these categories. 
-The second subtask involves extracting the PIO frame related to the identified causal claim in a given text snippet.
+The second subtask involves extracting the PIO frame related to the identified causal claim in a text snippet using an end-to-end deep learning model.
+The model utilizes both word-level, including contextual information and character-level features capturing different aspects of the data.
 
-These subtasks have potential applications in content moderation, insurance claim identification, and hypothesis generation from clinical notes. We believe that the shared task will motivate further research in this direction and lead to the development of more effective and accurate methods for causal claim identification and PIO frame extraction.
-
-
-
+Our approach to subtask one fared well at rank 4, with F1 a 32.77\% better than the last ranked approach and 12.7\% behind the approach ranked 1.
+For subtask 2, the approach ranks second last on the leaderboard, and the system mainly struggles with identifying the population frame.
+These subtasks have potential applications in content moderation, insurance claim identification, and hypothesis generation from clinical notes.
+We believe that the shared task will motivate further research in this direction and lead to the development of more effective and accurate methods for causal claim identification and PIO frame extraction.
+%
+%
+%
 \section{Background}
-
+\label{background}
+%
 The task of identifying causal claims and extracting the associated PIO frame from unstructured text data has received increasing attention in recent years. This is particularly relevant in the healthcare domain, where large amounts of medical notes, research articles, and patient forums are generated on a daily basis.
 
 Manual extraction of causal claims and PIO frames from such data is a time-consuming and error-prone process. Therefore, there is a growing interest in developing automated methods that can identify and extract such information with high accuracy.
