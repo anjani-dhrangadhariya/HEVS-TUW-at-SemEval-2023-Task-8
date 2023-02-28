@@ -125,7 +125,7 @@ In this section we describe our approach.
 %
 %
 %
-\subsection{subtask 1} \label{sec:system1}
+\subsection{Subtask 1} \label{sec:system1}
 \label{subsec:syst_task1}
 %
 For subtask 1 we implement two components: weakly supervised question detection and a Transformers-based fully supervised entity recogniton.
@@ -161,7 +161,7 @@ The three last models are trained
 %
 %
 %
-\subsection{subtask 2}
+\subsection{Subtask 2}
 \label{system:task2}
 %
 PIO extraction was a three-part system: a text preprocessing module, a deep learning entity extraction pipeline and a rule-based approach to combine separate PIO predictions.
@@ -172,13 +172,11 @@ PIO extraction was a three-part system: a text preprocessing module, a deep lear
 %
 The PIO dataset was processed to parse annotation from the Reddit posts.
 The empty or partially deleted samples were removed leaving 522 samples.
-Next, the text tokens were enriched with the part-of-the-speech (POS) tags and token lemmas using spaCy~\footnote{https://spacy.io/}.
+Next, the text tokens were enriched with the part-of-the-speech (POS) tags and token lemmas using scispaCy~\footnote{https://spacy.io/universe/project/scispacy}.
 %
 %
 %
 \subsubsection{Deep learning module}
-%
-%
 %
 The deep learning system was built on combining a feature representation (word-level and character-level) component followed by a linear sequence labelling layer.
 Our feature representation approach was inspired from Aguilar \textit{et al.}'s multi-task learning approach.~\cite{aguilar2019multi}
@@ -192,7 +190,7 @@ Transformer models, specifically \textbf{RoBERTa} and \textbf{BioMed-RoBERTa}, w
 POS information helps NLP models better understand the syntactic structure of a sentence.
 The \textbf{POS} embeddings were $\mathbf{P}^{18 \times 512}$ dimensional one-hot sparse vectors corresponding to the POS features and the maximum tokens allowed per transformer input. 
 POS features were either \textbf{one-hot} encoded or transformed using a \textbf{BiLSTM} (bidirectional Long short-term memory) to encode long-term dependencies and learn a task-specific grammatical structure from the input samples.~\cite{hochreiter1997long}
-Transformer and POS features were concatenated to obtain a word-level representation (see Figure~\ref{fig:task2_char}).
+Transformer and POS features were concatenated to obtain a word-level representation (see Figure~\ref{fig:task2_word}).
 %Anjani: Include a figure with character and word representations
 \begin{figure}[!htbp]
     \centering
@@ -225,8 +223,7 @@ The final word- and character-level representations were concatenated and fed to
 %
 %
 \section{Experimental setup}
-In this section we describe our experimental setup for subtasks (1) and (2). 
-Runs for both the subtasks are evaluated using macro F1-score measure.
+This section describes our experimental setup for subtasks (1) and (2), both of which were evaluated using a macro F1-score measure.
 %
 %
 %
@@ -238,7 +235,7 @@ Runs for both the subtasks are evaluated using macro F1-score measure.
 %
 %
 %
-\subsection{subtask 1}
+\subsection{Subtask 1}
 
 We train all transformer based models for 30 epochs. 
 Following task organisers, we perform splitting on whitespaces.
@@ -262,10 +259,10 @@ We do the majority voting for non-null predictions, i.e. whenever at least one m
 %
 %
 %
-\subsection{subtask 2}
+\subsection{Subtask 2}
 \label{exps:task2}
 %
-For the subtask 2, the experiments were conducted using PyTorch 1.10 and transformer library 4.8.2.
+For the subtask 2, the experiments were conducted using PyTorch 1.10, scispaCy 0.4.0, and transformer 4.8.2.
 We submitted five runs with three training experiments each for PIO classes using the system components described in section~\ref{system:task2}.
 For each PIO run, the experiments were conducted and averaged over the three most common Python random seeds, 0, 1 and 42.
 
@@ -274,17 +271,17 @@ The dataset was divided into training (80\%) and validation sets (20\%).
 The sequence input length was 512 tokens across the experiments corresponding to the transformer input restriction.
 The dimensions for the contextual word embeddings were $\mathbf{T}^{768 \times 512}$ and for the one-hot POS embeddings were $\mathbf{P}^{18 \times 512}$.
 The dimensions for the orthographic character embeddings were $\mathbf{O}^{6 \times 20 \times 512}$ and for the character embeddings were $\mathbf{C}^{28 \times 20 \times 512}$.
-Architecture used for each run is described below and further implementation details could be found in our GitHub repository.
+Specific architecture used for each run is described below.
 %
 \begin{enumerate}
-    \item Run 1: RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, and followed by a max pooling operation and finally obtaining the character representation post a fc layer via ReLU. 
-    \item Run 2: RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character embeddings were CNN transformed, and followed by a max pooling operation and finally obtaining the character representation post a fc layer via ReLU.
-    \item Run 3: RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, and followed by a GAP operation and finally obtaining the character representation post a fc layer via ReLU.
-    \item Run 4: RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, and followed by a GAP operation and finally obtaining the character representation post a fc layer via ReLU.
-    \item Run 5: Three different architectures, each corresponding to PIO classes, were used for the fifth run. Ensemble 14 (P), 13 (I) BRoB, 1 (O)   
+    \item Run 1: RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation and finally obtaining the character representation post an fc layer via ReLU. 
+    \item Run 2: RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation and finally obtaining the character representation post a fc layer via ReLU.
+    \item Run 3: RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation and finally obtaining the character representation post a fc layer via ReLU.
+    \item Run 4: RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation and finally obtaining the character representation post a fc layer via ReLU.
+    \item Run 5: Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation.. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. 
 \end{enumerate}
-
-For each run described above, once the processed word and character representations were concatenated, and the results were fed to a linear layer to predict the PIO entity.
+%
+For each run described above, the processed word and character representations were concatenated and the results were fed to a linear layer to predict the PIO entity.
 Individual PIO predictions were combined based on majority voting with a random tie break.
 %
 %
