@@ -263,6 +263,7 @@ We do the majority voting for non-null predictions, i.e. whenever at least one m
 \label{exps:task2}
 %
 For the subtask 2, the experiments were conducted using PyTorch 1.10, scispaCy 0.4.0, and transformer 4.8.2.
+
 We submitted five runs with three training experiments each for PIO classes using the system components described in section~\ref{system:task2}.
 For each PIO run, the experiments were conducted and averaged over the three most common Python random seeds, 0, 1 and 42.
 
@@ -317,29 +318,50 @@ Results for our submissions in subtask 1 are presented in Table \ref{tab:task_1}
 \subsection{subtask 2}
 \label{res:task2}
 %
-F1-scores for the official SemEval-2023 test set for the subtask 2 are presented in Table \ref{tab:task_2}.
-
+Subtask 2 F1-scores for the official SemEval-2023 test set are presented in Table \ref{tab:task_2}.
+Run 3 had the best scoring architecture for the mean macro-average F1 for PIO classes and fared best for intervention and outcome classes.
+Run 2 had the best score only for the population class.
+Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% points lower than the approach ranked one and 2.52\% better than the last ranked approach (see Table~\ref{tab:leaderboard}).
 %
 \begin{table}[ht]
     \centering
-    \begin{tabular}{lccc}
+    \begin{tabular}{lcccc}
         \toprule
-          & \multicolumn{3}{c}{Macro F1} \\
+          & \multicolumn{4}{c}{Macro F1} \\
          \hline
-        Run & Population & Intervention & Outcome \\
+        Run & Pop & Int & Out & Overall \\
         \midrule
-        Run 1 & 12.39 & 19.43 & 22.10 \\
-        Run 2 & 21.30 & 20.05 & 20.33 \\
-        Run 3 & 17.44 & 26.39 & 22.78 \\
-        Run 4 & 11.54 & 25.63 & 22.74 \\
-        Run 5 & 08.18 & 16.47 & 12.28 \\
+        1 & 12.39 & 19.43 & 22.10 & 17.97 \\
+        2 & \textbf{21.30} & 20.05 & 20.33 & 20.56  \\
+        3 & 17.44 & \textbf{26.39} & \textbf{22.78} & \textbf{22.20} \\
+        4 & 11.54 & 25.63 & 22.74 & 19.97 \\
+        5 & 08.18 & 16.47 & 12.28 & 12.31 \\
         \bottomrule
     \end{tabular}
-    \caption{subtask 2 results: F1-score on the official SemEval-2023 test set for the Population, Intervention and Outcome classes over five runs.}
+    \caption{Subtask 2 F1-score on the official SemEval-2023 test set for the Population, Intervention and Outcome classes over five runs. Note: Pop = population, Int = intervention, Out = outcome}
     \label{tab:task_2}
 \end{table}
-
-
+%
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{p{3.3cm}c c c }
+    \toprule
+    team & Pop & Int & Out \\
+    \midrule
+        robvanderg & 40.55 & 49.71 & 30.08 \\
+        yhcheng\_ncu, jenhaoyang, lhlee & 37.78 & 43.58 & 30.67 \\
+        gramacha & 34.96 & 42.16 & 20.83 \\ 
+        anthonyhughes & 32.22 & 41.29 & 23.75 \\
+        wojciechkusa & 17.44 & 26.39 & 22.78 \\ 
+        aka & 17.67 & 21.05 & 20.31 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Macro F1-scores for all the SemEval-2023 task 8 subtask 2 submission. Note: Pop = population, Int = intervention, Out = outcome}
+\label{tab:leaderboard}
+\end{table}
+%
+%
+%
 \section{Conclusion}
 
 
