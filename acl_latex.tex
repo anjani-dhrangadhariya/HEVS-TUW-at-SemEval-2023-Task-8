@@ -198,7 +198,7 @@ Transformer and POS features were concatenated to obtain a word-level representa
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\columnwidth]{figures/word_arch.pdf}
-    \caption{Word representation using concatenation of the POS embeddings (with or without BiLSTM transformation) and transformer embeddings (yellow).}
+    \caption{Word representation using concatenation of the POS embeddings (in blue, with or without BiLSTM transformation) and transformer embeddings (yellow).}
     \label{fig:task2_word}
 \end{figure}
 %
@@ -209,9 +209,8 @@ Transformer and POS features were concatenated to obtain a word-level representa
 To obtain the \textbf{character features}, input characters are embedded into a $\mathbf{C}^{d \times wl}$ dimensional one-hot encoded vector, where d is the dimension of the features per character, and $wl$ is the maximum length of characters per word.
 \textbf{Character features} are sparser matrices encapsulating character-level information, including alphabet and individual punctuation.
 \textbf{Orthographic features} are the character-based features that encapsulate word shape, including letter capitalization, punctuation, digits, and other orthographic features, e.g., "SemEval 2023!" encoded as "CccCccc nnnnp". 
-
 %An orthographic token encoding was six-dimensional, and character encoding was 28-dimensional, with a maximum token length of 20 characters applying post-padding on shorter words and truncating the longer ones.
-Our system used either the orthographic or the character features, which were transformed using a 1-dimensional convolutional neural network (\textbf{1D-CNN}) followed by either a max pooling (\textbf{MP}) or global average pooling (\textbf{GAP}) operation.~\cite{zhou2016learning}
+Our system either used the orthographic or the character features, which were transformed using a 1-dimensional convolutional neural network (\textbf{1D-CNN}) followed by either a max pooling (\textbf{MP}) or global average pooling (\textbf{GAP}) operation.~\cite{zhou2016learning}
 Next, the results were fed through a fully-connected layer via ReLU (Rectified Linear Unit) to obtain a character-level representation.
 The final word- and character-level representations were concatenated and fed to a \textbf{linear layer} to predict the entity sequence.
 %
@@ -220,7 +219,7 @@ The final word- and character-level representations were concatenated and fed to
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\columnwidth]{figures/word_arch2.pdf}
-    \caption{Character representation.}
+    \caption{Character representation was was either obtained using the orthographic encoding (left) or character encoding (right) as explained in the system over in section~\ref{system:task2}}
     \label{fig:task2_char}
 \end{figure}
 %
