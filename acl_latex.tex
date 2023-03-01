@@ -70,14 +70,13 @@
 {\let\thefootnote\relax\footnotetext{$\dag$ Equal contribution.}}
 
 \begin{abstract}
-This paper describes HEVS-TUW team submission to the SemEval-2023 Task 8: Causal Claims.
+This paper describes the HEVS-TUW team submission to the SemEval-2023 Task 8: Causal Claims.
 We participated in two subtasks: (1) causal claims detection and (2)  PIO identification.
 For subtask 1, we experimented with an ensemble of weakly supervised question detection and fine-tuned Transformer supervised models.
-For the subtask 2 of PIO frame extraction, we used a combination of deep representation learning and a rule-based approach. 
+For subtask 2 of PIO frame extraction, we used a combination of deep representation learning and a rule-based approach. 
 Our best model for subtask 1 ranks fourth with an F1-score of 65.77\% 
 It shows moderate benefit from ensembling models pretrained on independent categories
 The results for subtask 2 warrant further investigation for improvement.
-
 \end{abstract}
 
 \section{Introduction}
@@ -101,13 +100,11 @@ We believe that the shared task will motivate further research in this direction
 \section{Background}
 \label{background}
 %
-The task of identifying causal claims and extracting the associated PIO frame from unstructured text data has received increasing attention in recent years.
-This is particularly relevant in the healthcare domain, where large amounts of medical notes, research articles, and patient forums are generated on a daily basis.
-Manual extraction of causal claims and PIO frames from such data is a time-consuming and error-prone process. Therefore, there is a growing interest in developing automated methods that can identify and extract such information with high accuracy.
+%The task of identifying causal claims and extracting the associated PIO frame from unstructured text data has received increasing attention in recent years.
+Causal claims identification in the open domain is widely researched, but the healthcare domain has only garnered attention recently.~\cite{mueller2018extracting,wang-etal-2019-identifying,parveen-etal-2021-automatic,islam-etal-2021-identifying}
+In the healthcare domain large amounts of medical notes, social media posts, research articles, and patient forums are generated on a daily basis.
+Manual extraction of causal claims and PIO frames from such data is a time-consuming and error-prone process.
 
-While these methods have shown promising results, there is still room for improvement in terms of accuracy and efficiency.
-The SemEval-2023 Task 8 provides an opportunity for researchers to develop novel methods for causal claim identification and PIO frame extraction and to benchmark their performance against state-of-the-art methods.
-We hope that the shared task will lead to the development of more effective and accurate methods for identifying and extracting causal claims and PIO frames from unstructured text data.
 
 %Anjani: Background for the PIO extraction task
 For a decade, PIO extraction was limited to sentence-level information extraction due to the unavailability of frame-annotated datasets.~\cite{boudin2010combining,jin2018pico}
@@ -116,6 +113,10 @@ Nonetheless, previous studies on PIO frame extraction primarily concentrated on 
 The SemEval-2023 task 8 overtakes the challenge of extracting these frames from noisy social media data.
 The task organizers provide 597, English-language PIO labelled Reddit posts.
 We approach PIO frame extraction as sequence labelling and use a combination of deep learning and rule-based approach that captures multiple feature representations from the data, as the dataset is relatively small.
+
+
+The SemEval-2023 Task 8 provides an opportunity for researchers to develop novel methods for causal claim identification and PIO frame extraction from noisy social media data and to benchmark their performance against state-of-the-art methods.
+We hope that the shared task will lead to the development of more effective and accurate methods for identifying and extracting causal claims and PIO frames from unstructured text data.
 %
 %
 %
@@ -189,15 +190,15 @@ Our feature representation approach was inspired from Aguilar \textit{et al.}'s 
 \paragraph{Word-level features: }
 %
 The word-level features included transformer and POS features.
-Transformer models, specifically \textbf{RoBERTa} and \textbf{BioMed-RoBERTa}, were used to extract $\mathbf{T}^{d \times l}$ dimensional contextual features from input samples, where l is the transformer model's hidden layer dimension.~\cite{liu2019roberta,gururangan2020don}
+Transformer models, specifically \textbf{RoBERTa} and \textbf{BioMed-RoBERTa}, were used to extract $\mathbf{T}^{d \times l}$ dimensional contextual features from input samples, where d is the transformer model's hidden layer dimension.~\cite{liu2019roberta,gururangan2020don}
 POS information helps NLP models better understand the syntactic structure of a sentence.
-The \textbf{POS} embeddings were $\mathbf{P}^{18 \times 512}$ dimensional one-hot sparse vectors corresponding to the POS features and the maximum tokens allowed per transformer input. 
+The \textbf{POS} embeddings were $\mathbf{P}^{d_p \times 512}$ dimensional one-hot sparse vectors corresponding to the 18-dimensional POS features and the maximum tokens ($l = 512$) allowed per transformer input. 
 POS features were either \textbf{one-hot} encoded or transformed using a \textbf{BiLSTM} (bidirectional Long short-term memory) to encode long-term dependencies and learn a task-specific grammatical structure from the input samples.~\cite{hochreiter1997long}
 Transformer and POS features were concatenated to obtain a word-level representation (see Figure~\ref{fig:task2_word}).
 %Anjani: Include a figure with character and word representations
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\columnwidth]{figures/word_arch.pdf}
+\includegraphics[width=\columnwidth]{figures/word_arch.pdf}
     \caption{Word representation using concatenation of the POS embeddings (in blue, with or without BiLSTM transformation) and transformer embeddings (yellow).}
     \label{fig:task2_word}
 \end{figure}
@@ -211,7 +212,7 @@ To obtain the \textbf{character features}, input characters are embedded into a 
 A maximum of 20 characters per token ($wl$) were allowed applying post-padding on shorter tokens and truncating the longer ones.
 Character features are matrices encapsulating character-level information, including individual alphabet and punctuation and are hence sparser than the orthographic features.
 Our system either used the orthographic or the character features, which were transformed using a 1-dimensional convolutional neural network (\textbf{1D-CNN}) followed by either a max pooling (\textbf{MP}) or global average pooling (\textbf{GAP}) operation.~\cite{zhou2016learning}
-Next, the results were fed through a fully-connected (\textbf{fc}) layer via ReLU (Rectified Linear Unit) to obtain a character-level representation (see Figure~\ref{fig:task2_char}).
+Next, the results were fed through a fully-connected (\textbf{fc}) layer via \textbf{ReLU} (Rectified Linear Unit) to obtain a character-level representation (see Figure~\ref{fig:task2_char}).
 The final word- and character-level representations were concatenated and fed to a \textbf{linear layer} to predict the entity sequence.
 %
 %
@@ -271,8 +272,6 @@ For the subtask 2, the experiments were conducted using PyTorch 1.10, scispaCy 0
 
 We submitted five runs with three training experiments each for PIO classes using the system components described in section~\ref{system:task2}.
 For each PIO run, the experiments were conducted and averaged over the three most common Python random seeds, 0, 1 and 42.
-
-
 The dataset was divided into training (80\%) and validation sets (20\%).
 The sequence input length was 512 tokens across the experiments corresponding to the transformer input restriction.
 The dimensions for the contextual word embeddings were $\mathbf{T}^{768 \times 512}$ and for the one-hot POS embeddings were $\mathbf{P}^{18 \times 512}$.
@@ -280,10 +279,10 @@ The dimensions for the orthographic character embeddings were $\mathbf{O}^{6 \ti
 Specific architecture used for each run is described below.
 %
 \begin{enumerate}
-    \item Run 1: RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation and finally obtaining the character representation post an fc layer via ReLU. 
-    \item Run 2: RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation and finally obtaining the character representation post a fc layer via ReLU.
-    \item Run 3: RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation and finally obtaining the character representation post a fc layer via ReLU.
-    \item Run 4: RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation and finally obtaining the character representation post a fc layer via ReLU.
+    \item Run 1: RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
+    \item Run 2: RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
+    \item Run 3: RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
+    \item Run 4: RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
     \item Run 5: Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation.. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. 
 \end{enumerate}
 %
@@ -326,7 +325,7 @@ Results for our submissions in subtask 1 are presented in Table \ref{tab:task_1}
 Subtask 2 F1-scores for the official SemEval-2023 test set are presented in Table \ref{tab:task_2}.
 Run 3 had the best scoring architecture for the mean macro F1 for PIO classes and fared best for intervention and outcome classes.
 Run 2 had the best score only for the population class.
-Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% points lower than the approach ranked one and 2.52\% better than the last ranked approach (see Table~\ref{tab:leaderboard}).
+Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% points lower than the approach ranked one and 2.52\% better than the last ranked approach.
 %
 \begin{table}[ht]
     \centering
@@ -345,24 +344,6 @@ Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% poin
     \end{tabular}
     \caption{Subtask 2 F1-score on the official SemEval-2023 test set for the Population, Intervention and Outcome classes over five runs. Note: Pop = population, Int = intervention, Out = outcome}
     \label{tab:task_2}
-\end{table}
-%
-\begin{table}[!ht]
-    \centering
-    \begin{tabular}{p{3.3cm}c c c }
-    \toprule
-    team & Pop & Int & Out \\
-    \midrule
-        robvanderg & 40.55 & 49.71 & 30.08 \\
-        yhcheng\_ncu, jenhaoyang, lhlee & 37.78 & 43.58 & 30.67 \\
-        gramacha & 34.96 & 42.16 & 20.83 \\ 
-        anthonyhughes & 32.22 & 41.29 & 23.75 \\
-        wojciechkusa & 17.44 & 26.39 & 22.78 \\ 
-        aka & 17.67 & 21.05 & 20.31 \\
-    \bottomrule
-    \end{tabular}
-    \caption{Macro F1-scores for all the SemEval-2023 task 8 subtask 2 submission. Note: Pop = population, Int = intervention, Out = outcome}
-\label{tab:leaderboard}
 \end{table}
 %
 %
