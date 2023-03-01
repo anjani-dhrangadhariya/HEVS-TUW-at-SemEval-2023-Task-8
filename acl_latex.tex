@@ -71,10 +71,12 @@
 
 \begin{abstract}
 This paper describes HEVS-TUW team submission to the SemEval-2023 Task 8: Causal Claims.
-We participated in two subtasks: (1):causal claims detection and (2): PIO identification.
-For task 1, we experimented with an ensemble of weakly supervised question detection and fine-tuned Transformer NER models.
-For the subtask 2 of PIO frame extraction, we built an ensemble of deep representation learning and a rule-based approach. 
-Our results for subtask 1 show moderate benefit from ensembling models pretrained on independent categories.
+We participated in two subtasks: (1) causal claims detection and (2)  PIO identification.
+For subtask 1, we experimented with an ensemble of weakly supervised question detection and fine-tuned Transformer supervised models.
+For the subtask 2 of PIO frame extraction, we used a combination of deep representation learning and a rule-based approach. 
+Our best model for subtask 1 ranks fourth with an F1-score of 65.77\% 
+It shows moderate benefit from ensembling models pretrained on independent categories
+The results for subtask 2 warrant further investigation for improvement.
 
 \end{abstract}
 
@@ -86,7 +88,7 @@ Identification and verification of causal claims from unstructured text data is 
 % 
 The first subtask involves identifying the span of text that contains one of the four entities: a \emph{causal claim}, a \emph{personal experience}, a \emph{personal experience based on a claim} or a \emph{question}. 
 This can be done at sentence level, but it is possible that only a part of a sentence is annotated with one of these categories. 
-The second subtask involves extracting the PIO frame related to the identified causal claim in a text snippet using an end-to-end deep learning model.
+The second subtask involves extracting the PIO frame related to the identified causal claim in a text snippet.
 The model utilizes both word-level, including contextual information and character-level features capturing different aspects of the data.
 
 Our approach to subtask one fared well at rank 4, with F1 a 32.77\% better than the last ranked approach and 12.7\% behind the approach ranked 1.
@@ -128,15 +130,16 @@ In this section we describe our approach.
 \subsection{Subtask 1} \label{sec:system1}
 \label{subsec:syst_task1}
 %
-For subtask 1 we implement two components: weakly supervised question detection and a Transformers-based fully supervised entity recogniton.
-We treat the task 1 as a named entity recognition task.
+For subtask 1 we implement two components: weakly supervised question detection and a Transformers-based supervised classifier.
+Even though it would be possible to classify the sentences on a sentence-level, we decided to conduct more fine-grained token-level classification.
 
 \subsubsection*{Question detector}
 
 
 We design a weakly supervised question detector approach (QD).
 We use a spaCy sentencizer to split the text into sentences.
-Next we search for the occurrences of the question mark token `?'. 
+Next we search for the occurrences of the question mark token `?' and we assign it an end token of a question span.
+To find the beginning span, we either look for a punctuation token from `.’, `!’, `?’ or a token in `how’, ‘what’, ‘where’, `why’.
 
 
 % 2. weakly questions: st1\_test\_predictions.csv (different folder)
@@ -144,7 +147,7 @@ Next we search for the occurrences of the question mark token `?'.
 \subsubsection*{Supervised NER}
 
 
-We fine-tune five models using training subset of the released trainset:
+We fine-tune five models using training subset of the released dataset:
 
 \begin{enumerate}
 \item RoBERTa$_A$ -- RoBERTa model~\cite{Liu2019RoBERTaAR} trained on all entities. % //newstorage5/wkusa/models/pico/ph1-all/roberta/final-model.pt trained for 25 epochs: st1\_test\_flair\_roberta.csv
@@ -154,8 +157,8 @@ We fine-tune five models using training subset of the released trainset:
 \item distilBERT$_c$ -- distilBERT model trained on claim entities %: st1\_test\_flair\_per\_exp.csv
 \end{enumerate}
 
-The three last models are trained 
-
+The three last models are trained as a binary classification. 
+For distilBERT$_{pe}$ and distilBERT$_c$, we also assume that all `claims based on personal experience’ tokens are positive for both categories.
 
 
 %
@@ -239,7 +242,7 @@ This section describes our experimental setup for subtasks (1) and (2), both of 
 
 We train all transformer based models for 30 epochs. 
 Following task organisers, we perform splitting on whitespaces.
-We use 80\% of training data for training models and 20\% for validation.
+We use 80\% of the dataset for training models and 20\% for validation.
 We use Flair to implement our NER models~\cite{Akbik2019FLAIRAE}.
 
 For subtask 1 we submit four runs which are ensembles of models described in Section \ref{sec:system1}:
@@ -251,9 +254,11 @@ For subtask 1 we submit four runs which are ensembles of models described in Sec
 \item \textbf{Run 4} - QD + distilBERT$_q$ + distilBERT$_{pe}$ + distilBERT$_A$ + RoBERTa$_A$ 
 \end{itemize}
 
-Run 4 is like Run 2 just adds roberta.
-Run 3 is like Run 2 but last model is switched.
-We do the majority voting for non-null predictions, i.e. whenever at least one model predicts some entity we 
+%Run 4 is like Run 2 just adds roberta.
+%Run 3 is like Run 2 but last model is switched.
+We do the majority voting for non-null predictions, i.e. whenever at least one model predicts an entity, we give that prediction higher precedence compared to a zero-class prediction from other models.
+When at least one model predicts `claim’ category and at least one predicts `personal experience’ we assign to that token `claim based on personal experience’.
+We did not submit run with distilBERT$_c$ model, as this model was not able to predict any entity correctly on validation set.
 
 %Runs are evaluated using macro F1-score measure. %Anjani: moved this sentence above as macro F1 was used for both the subtasks and was redundant. 
 %
@@ -292,7 +297,7 @@ Individual PIO predictions were combined based on majority voting with a random 
 %
 %
 %
-\subsection{subtask 1}
+\subsection{Subtask 1}
 \label{res:task1}
 %
 Results for our submissions in subtask 1 are presented in Table \ref{tab:task_1}. Our approach based on adding distilbert with personal experience improves recall for these entities.
@@ -315,11 +320,11 @@ Results for our submissions in subtask 1 are presented in Table \ref{tab:task_1}
 %
 %
 %
-\subsection{subtask 2}
+\subsection{Subtask 2}
 \label{res:task2}
 %
 Subtask 2 F1-scores for the official SemEval-2023 test set are presented in Table \ref{tab:task_2}.
-Run 3 had the best scoring architecture for the mean macro-average F1 for PIO classes and fared best for intervention and outcome classes.
+Run 3 had the best scoring architecture for the mean macro F1 for PIO classes and fared best for intervention and outcome classes.
 Run 2 had the best score only for the population class.
 Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% points lower than the approach ranked one and 2.52\% better than the last ranked approach (see Table~\ref{tab:leaderboard}).
 %
@@ -363,8 +368,15 @@ Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% poin
 %
 %
 \section{Conclusion}
+%
 
+We participated in both subtasks of SemEval-2023 Task 8.
+Our submissions are mainly based on fine-tuning Transformers-based models and creating an ensemble of these models.
+Results show a positive impact of using independent models for each entity type in subtask 1.
 
+%
+%
+%
 % These instructions are for authors submitting papers to *ACL conferences using \LaTeX. They are not self-contained. All authors must follow the general instructions for *ACL proceedings,\footnote{\url{http://acl-org.github.io/ACLPUB/formatting.html}} and this document contains additional instructions for the \LaTeX{} style files.
 
 % The templates include the \LaTeX{} source of this document (\texttt{acl.tex}),
