@@ -85,7 +85,7 @@ The results for subtask 2 warrant further investigation for improvement.
 
 \textcolor{red}{1.	Providing a descriptive paper title under the paper template requirement is better. }
 
-\textcolor{red}{2.	I suggest using the combined BiLSTM and CRF architecture to improve the performance for subtask 2. }
+\textcolor{red}{2.	I suggest using the combined BiLSTM and CRF architecture to improve the performance for subtask 2.}
 
 % 
 Identification and verification of causal claims from unstructured text data is an important task for various decision-making processes, particularly in the field of healthcare. The SemEval-2023 Task 8~\cite{CausalClaims} aims to advance the state-of-the-art in this area by focusing on two subtasks: identification of causal claims and extraction of Population, Intervention, and Outcome (PIO) entities.
@@ -121,7 +121,7 @@ After the release of the EBM-PICO corpus, the extraction efforts moved to span a
 Nonetheless, previous studies on PIO frame extraction primarily concentrated on extracting them from well-written, peer-reviewed literature~\cite{brockmeier2019improving,zhang2020unlocking,dhrangadhariya2021end}.
 The SemEval-2023 task 8 overtakes the challenge of extracting these frames from noisy social media data.
 The task organizers provide 597, English-language PIO labelled Reddit posts.
-We approach PIO frame extraction as sequence labelling and use a combination of deep learning and rule-based approach that captures multiple feature representations from the data, as the dataset is relatively small.
+We approach PIO frame extraction as binary sequence labelling and use a combination of deep learning and rule-based approach that captures multiple feature representations from the data, as the dataset is relatively small and noisy.
 
 
 The SemEval-2023 Task 8 provides an opportunity for researchers to develop novel methods for causal claim identification and PIO frame extraction from noisy social media data and to benchmark their performance against state-of-the-art methods.
@@ -239,6 +239,13 @@ The final word- and character-level representations were concatenated and fed to
 %
 %
 %
+\subsubsection{Rule-based module}
+%
+The processed word and character representations were concatenated and the results were fed to a linear layer to individually predict the PIO entity.
+Finally, when multiple predictions were made for the PIO entities, the most common prediction was used, with a random choice being made in case of a tie.
+%
+%
+%
 \section{Experimental setup}
 This section describes our experimental setup for subtasks (1) and (2), both of which were evaluated using a macro F1-score measure.
 %
@@ -304,36 +311,34 @@ The dataset was divided into training (80\%) and validation sets (20\%).
 The sequence input length was 512 tokens across the experiments corresponding to the transformer input restriction.
 The dimensions for the contextual word embeddings were $\mathbf{T}^{768 \times 512}$ and for the one-hot POS embeddings were $\mathbf{P}^{18 \times 512}$.
 The dimensions for the orthographic character embeddings were $\mathbf{O}^{6 \times 20 \times 512}$ and for the character embeddings were $\mathbf{C}^{28 \times 20 \times 512}$.
-Specific architecture used for each run is described below.
+Specific architecture used for each run is described in the Table~\ref{tab:runs_task2}.
 %
 \begin{enumerate}
-    \item \textbf{Run 1:} RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
-    \item \textbf{Run 2:} RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
-    \item \textbf{Run 3:} RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
-    \item \textbf{Run 4:} RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
-    \item \textbf{Run 5:} Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation.. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. 
+    \item \textbf{Run 1 RoBERTa-(BiLSTM+POS)-(MP(CNN)+fc): } RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
+    \item \textbf{Run 2 RoBERTa-(one-hot-POS)-(MP(CNN)+fc): } RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
+   \item \textbf{Run 3 RoBERTa-(one-hot-POS)-(GAP(CNN)+fc): } RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
+   \item \textbf{Run 4 RoBERTa-(BiLSTM+POS)-(GAP(CNN)+fc): } RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
+    \item \textbf{Run 5 Misc:} Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. 
 \end{enumerate}
 
 \begin{table*}[]
     \centering
     \begin{tabular}{lp{13cm}}
     \toprule
-   Run name & Description \\ \midrule
-       \textbf{Run 1}  & RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU. \\
-       \textbf{Run 2}  & RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU. \\
+   Run name & Model architecture description \\ \midrule
+       \textbf{Run 1} & RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU. \\
+       \textbf{Run 2} & RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU. \\
         \textbf{Run 3} & RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU. \\
         \textbf{Run 4} & RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU. \\
-        \textbf{Run 5} & Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation.. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. \\
+        \textbf{Run 5}  & Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. \\
          \bottomrule
     \end{tabular}
-    \caption{Caption}
+    \caption{The table outlining the model architecture utilized in five different runs for the task of PIO extraction.}
     \label{tab:runs_task2}
 \end{table*}
 
-
 %
-For each run described above, the processed word and character representations were concatenated and the results were fed to a linear layer to predict the PIO entity.
-Individual PIO predictions were combined based on majority voting with a random tie break.
+
 %
 %
 %
@@ -350,7 +355,7 @@ Adding  distilBERT$_{pe}$ to the ensemble positively impacts Recall and this is 
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{lccc}
+    \begin{tabular}{cccc}
         \toprule
         Run & Precision & Recall & F1-score \\
         \midrule
@@ -376,9 +381,9 @@ Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% poin
 %
 \begin{table}[ht]
     \centering
-    \begin{tabular}{lcccc}
+    \begin{tabular}{ccccc}
         \toprule
-          & \multicolumn{4}{c}{Macro F1} \\
+          & \multicolumn{4}{c}{Macro F1-acore} \\
          \hline
         Run & Pop & Int & Out & Overall \\
         \midrule
@@ -402,6 +407,18 @@ We participated in both subtasks of SemEval-2023 Task 8.
 Our submissions are mainly based on fine-tuning Transformers-based models and creating an ensemble of these models.
 Results show a positive impact of using independent models for each entity type in subtask 1.
 Source code is available under the following URL: \url{https://github.com/WojciechKusa/pico-semeval2023}
+%
+%
+%
+\section*{Limitations}
+%
+For subtask 2, the rule-based module uses majority voting to choose the final prediction.
+MV selects the final token label supported by most of the model runs by equally weighting each run and discounting the accuracy of each model.
+The system could benefit from considering model accuracies and weighting predictions from each model to support the final prediction.
+Additionally, the final prediction aggregation scheme is stringent and selects only the label predicted by multiple voters.
+It could increase the impact of out-of-the-span labels constituting the majority class leading to a lower recall and F1 score.
+Consider, for example, only one voter labelling one of the PIO entities and the rest labelling out-of-the-span entity.
+For such cases, the rule could be adapted for leniency and selecting the entity in the case at least one voters predict it.
 %
 %
 %
