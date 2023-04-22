@@ -34,10 +34,12 @@
 % If the title and author information does not fit in the area allocated, uncomment the following
 %
 %\setlength\titlebox{<dim>}
+\addtolength\titlebox{2cm}
 %
 % and set <dim> to something 5cm or larger.
 
-\title{HEVS-TUW at SemEval-2023 Task 8}
+% \title{HEVS-TUW at SemEval-2023 Task 8: Binary and Multi-class Language Model Ensembles for Claims Identification and PICO Extraction}
+\title{HEVS-TUW at SemEval-2023 Task 8: Ensemble of Language Models and Rule-based Classifiers for Claims Identification and PICO Extraction}
 
 % Author information can be set in various styles:
 % For several authors from the same institution:
@@ -66,6 +68,7 @@
 }
 
 
+
 \begin{document}
 \maketitle
 {\let\thefootnote\relax\footnotetext{$\dag$ Equal contribution.}}
@@ -79,40 +82,39 @@ Our best model for subtask 1 ranks fourth with an F1-score of 65.77\%.
 It shows moderate benefit from ensembling models pretrained on independent categories.
 The results for subtask 2 warrant further investigation for improvement.
 \end{abstract}
-
+%
 \section{Introduction}
-
-
-\textcolor{red}{1.	Providing a descriptive paper title under the paper template requirement is better. }
-
-\textcolor{red}{2.	I suggest using the combined BiLSTM and CRF architecture to improve the performance for subtask 2.}
-
+\label{sec:intro}
+%
+% \textcolor{red}{2.	I suggest using the combined BiLSTM and CRF architecture to improve the performance for subtask 2.}
 % 
-Identification and verification of causal claims from unstructured text data is an important task for various decision-making processes, particularly in the field of healthcare. The SemEval-2023 Task 8~\cite{CausalClaims} aims to advance the state-of-the-art in this area by focusing on two subtasks: identification of causal claims and extraction of Population, Intervention, and Outcome (PIO) entities.
-
+Identification and verification of causal claims from unstructured text data is essential for various decision-making processes, particularly in healthcare. The SemEval-2023 Task 8~\cite{khetan-EtAl:2023:SemEval} aims to advance the state-of-the-art in this area by focusing on two subtasks: identification of causal claims and extraction of Population, Intervention, and Outcome (PIO) entities.
 % 
 The first subtask involves identifying the span of text that contains one of the four entities: a \emph{causal claim}, a \emph{personal experience}, a \emph{personal experience based on a claim} or a \emph{question}. 
-This can be done at sentence level, but it is possible that only a part of a sentence is annotated with one of these categories. 
+This can be done at the sentence level, but only a part of a sentence may be annotated with one of these categories. 
 The second subtask involves extracting the PIO frame related to the identified causal claim in a text snippet.
 The model utilizes both word-level, including contextual information and character-level features capturing different aspects of the data.
 
 
-\textcolor{red}{- In the intro, give a short description of your system, without out the conclusions the results/conclusions you present there are uninformative}
+For subtask 1, our approach consisted of an ensemble of pre-trained language models with a rule-based question classifier. 
+Apart from training multi-class classification models, with the assumption that \emph{personal experience based on a claim} category can be treated both as an instance of a \emph{personal experience} and a \emph{causal claim}, language models were also fine-tuned as three independent binary classifiers.
+In subtask 2, we experimented with a system combining a deep learning entity extraction pipeline incorporating different textual features and followed by a rule-based approach to combine separate PIO tokens predictions into a consensus prediction sequence.
+% \textcolor{red}{- In the intro, give a short description of your system, without out the conclusions the results/conclusions you present there are uninformative}
 
-Our approach to subtask one fared well at rank~4, with F1-score a 32.77\% better than the last ranked approach and 12.7\% behind the approach ranked~1.
+Our approach to subtask 1 fared well at rank~4, with F1-score 32.77\% better than the last ranked approach and 12.7\% behind the approach ranked~1.
 For subtask 2, the approach ranks second last on the leaderboard, and the system mainly struggles with identifying the population frame.
 These subtasks have potential applications in content moderation, insurance claim identification, and hypothesis generation from clinical notes.
-We believe that the shared task will motivate further research in this direction and lead to the development of more effective and accurate methods for causal claim identification and PIO frame extraction.
+The shared task will motivate further research in this direction and lead to the development of more effective and accurate methods for causal claim identification and PIO frame extraction.
 %
 %
 %
 \section{Background}
-\label{background}
+\label{sec:background}
 %
 %The task of identifying causal claims and extracting the associated PIO frame from unstructured text data has received increasing attention in recent years.
 Causal claims identification in the open domain is widely researched, but the healthcare domain has only garnered attention recently~\cite{mueller2018extracting,wang-etal-2019-identifying,parveen-etal-2021-automatic,islam-etal-2021-identifying}.
-In the healthcare domain large amounts of medical notes, social media posts, research articles, and patient forums are generated on a daily basis.
-Manual extraction of causal claims and PIO frames from such data is a time-consuming and error-prone process.
+In the healthcare domain, large amounts of medical notes, social media posts, research articles, and patient forums are generated daily.
+Manually extracting causal claims and PIO frames from such data is time-consuming and error-prone.
 
 
 %Anjani: Background for the PIO extraction task
@@ -120,8 +122,8 @@ For a decade, PIO extraction was limited to sentence-level information extractio
 After the release of the EBM-PICO corpus, the extraction efforts moved to span and frame extraction~\cite{nye2018corpus}.
 Nonetheless, previous studies on PIO frame extraction primarily concentrated on extracting them from well-written, peer-reviewed literature~\cite{brockmeier2019improving,zhang2020unlocking,dhrangadhariya2021end}.
 The SemEval-2023 task 8 overtakes the challenge of extracting these frames from noisy social media data.
-The task organizers provide 597, English-language PIO labelled Reddit posts.
-We approach PIO frame extraction as binary sequence labelling and use a combination of deep learning and rule-based approach that captures multiple feature representations from the data, as the dataset is relatively small and noisy.
+The task organizers provide 597 English-language PIO-labelled Reddit posts.
+We approach PIO frame extraction as binary sequence labelling and use a combination of deep learning and a rule-based approach that captures multiple feature representations from the data, as the dataset is relatively small and noisy.
 
 
 The SemEval-2023 Task 8 provides an opportunity for researchers to develop novel methods for causal claim identification and PIO frame extraction from noisy social media data and to benchmark their performance against state-of-the-art methods.
@@ -130,7 +132,7 @@ We hope that the shared task will lead to the development of more effective and 
 %
 %
 \section{System overview}
-\label{system_over}
+\label{sec:system_over}
 %
 We participated in both subtasks of SemEval-2023 Task 8. 
 In this section we describe our approach.
@@ -142,35 +144,37 @@ In this section we describe our approach.
 %
 For subtask 1 we implement two components: weakly supervised question detection and a Transformers-based supervised classifier.
 Even though it would be possible to classify the sentences on a sentence-level, we decided to conduct more fine-grained token-level classification.
-
-\subsubsection*{Question detector}
-
-
+%
+%
+%
+\subsubsection{Question detector}
+\label{subsec:t1_questiondetect}
+%
 We design a weakly supervised question detector approach (QD).
 We use a spaCy sentencizer to split the text into sentences.
 Next we search for the occurrences of the question mark token `?' and we assign it an end token of a question span.
 To find the beginning span, we either look for a punctuation token from `.’, `!’, `?’ or a token in `how’, ‘what’, ‘where’, `why’.
-
-
+%
 % 2. weakly questions: st1\_test\_predictions.csv (different folder)
-
-\subsubsection*{Supervised classification}
-
-
+\subsubsection{Supervised classification}
+\label{subsec:t1_classifi}
+%
 We fine-tune five models using a training subset of the released dataset:
-
+%
+%
+%
 \begin{enumerate}
-\item RoBERTa$_A$ -- RoBERTa model~\cite{Liu2019RoBERTaAR} trained on all entities. % //newstorage5/wkusa/models/pico/ph1-all/roberta/final-model.pt trained for 25 epochs: st1\_test\_flair\_roberta.csv
-\item distilBERT$_A$ -- distilBERT model~\cite{Sanh2019DistilBERTAD} trained on all entities.  %all: all\_flair\_submission.csv
-\item  distilBERT$_q$ --  distilBERT trained on extracting only questions. %$_q$distil question  question\_flair\_submission.csv
-\item distilBERT$_{pe}$ -- distilBERT model trained on personal experience entities %: st1\_test\_flair\_per\_exp.csv
-\item distilBERT$_c$ -- distilBERT model trained on claim entities %: st1\_test\_flair\_per\_exp.csv
+\item RoBERTa$_A$ -- RoBERTa model~\cite{Liu2019RoBERTaAR} fine-tuned on all entities. % //newstorage5/wkusa/models/pico/ph1-all/roberta/final-model.pt trained for 25 epochs: st1\_test\_flair\_roberta.csv
+\item distilBERT$_A$ -- distilBERT model~\cite{Sanh2019DistilBERTAD} fine-tuned on all entities.  %all: all\_flair\_submission.csv
+\item  distilBERT$_q$ --  distilBERT fine-tuned on extracting only questions. %$_q$distil question  question\_flair\_submission.csv
+\item distilBERT$_{pe}$ -- distilBERT model fine-tuned on personal experience entities %: st1\_test\_flair\_per\_exp.csv
+\item distilBERT$_c$ -- distilBERT model fine-tuned on claim entities %: st1\_test\_flair\_per\_exp.csv
 \end{enumerate}
 
 The three last models are trained as a binary classification. 
-For distilBERT$_{pe}$ and distilBERT$_c$, we also assume that all `claims based on personal experience’ tokens are positive for both categories.
-
-
+We assumed that \emph{personal experience based on a claim} category could be treated both as an instance of a \emph{personal experience} and a \emph{causal claim} category. 
+Therefore, all \emph{personal experience based on a claim} tokens are treated as positive for both categories when fine-tuning distilBERT$_{pe}$ and distilBERT$_c$ models.
+This approach allows us to increase the training dataset size.
 %
 %
 %
@@ -182,14 +186,16 @@ PIO extraction was a three-part system: a text preprocessing module, a deep lear
 %
 %
 \subsubsection{Preprocessing module}
+\label{subsec:t2_preprocess}
 %
 The PIO dataset was processed to parse annotation from the Reddit posts.
-The empty or partially deleted samples were removed leaving 522 samples.
-Next, the text tokens were enriched with the part-of-the-speech (POS) tags and token lemmas using scispaCy\footnote{https://spacy.io/universe/project/scispacy}.
+The empty or partially deleted samples were removed, leaving 522 samples.
+The text tokens were enriched with the part-of-speech (POS) tags and lemmas using scispaCy\footnote{https://spacy.io/universe/project/scispacy}.
 %
 %
 %
 \subsubsection{Deep learning module}
+\label{subsec:t2_dl}
 %
 The deep learning system was built on combining a feature representation (word-level and character-level) component followed by a linear sequence labelling layer.
 We developed our feature representation approach based on the work of Aguilar \textit{et al.}, but with the difference that we did not train our system as a multi-task learning system.
@@ -201,6 +207,7 @@ Word level representations are important for capturing the overall meaning and c
 %
 %
 \paragraph{Word-level features: }
+\label{par:word_features}
 %
 The word-level features included transformer and POS features.
 Transformer models, specifically \textbf{RoBERTa} and \textbf{BioMed-RoBERTa}, were used to extract $\mathbf{T}^{d \times l}$ dimensional contextual features from input samples, where d is the transformer model's hidden layer dimension~\cite{liu2019roberta,gururangan2020don}.
@@ -211,7 +218,7 @@ Transformer and POS features were concatenated to obtain a word-level representa
 %Anjani: Include a figure with character and word representations
 \begin{figure}[!htbp]
     \centering
-\includegraphics[width=\columnwidth]{figures/word_arch.pdf}
+\includegraphics[width=0.95\columnwidth]{figures/word_arch.pdf}
     \caption{Word representation using concatenation of the POS embeddings (in blue, with or without BiLSTM transformation) and transformer embeddings (yellow).}
     \label{fig:task2_word}
 \end{figure}
@@ -219,6 +226,7 @@ Transformer and POS features were concatenated to obtain a word-level representa
 %
 %
 \paragraph{Character-level features: } 
+\label{par:char_features}
 %
 To obtain the \textbf{character features}, input characters are embedded into a $\mathbf{C}^{d_{c} \times wl}$ dimensional one-hot encoded vector, where $d_{c}$ is the dimension of the features per character, and $wl$ is the maximum length of characters per word.
 \textbf{Orthographic features} are the character-based features $\mathbf{O}^{d_{o} \times wl}$ that encapsulate word shape, including letter capitalization, punctuation, and digits, e.g., "SemEval 2023!" encoded as "CccCccc nnnnp". 
@@ -232,21 +240,24 @@ The final word- and character-level representations were concatenated and fed to
 %
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\columnwidth]{figures/word_arch2.pdf}
-    \caption{Character representation was was either obtained using the orthographic encoding (left) or character encoding (right) as explained in the system over in section~\ref{system:task2}}
+    \includegraphics[width=0.95\columnwidth]{figures/word_arch2.pdf}
+    \caption{Character representation was was either obtained using the orthographic encoding (left) or character encoding (right) as explained in the system overview.}
     \label{fig:task2_char}
 \end{figure}
 %
 %
 %
 \subsubsection{Rule-based module}
+\label{subsec:t2_rules}
 %
 The processed word and character representations were concatenated and the results were fed to a linear layer to individually predict the PIO entity.
-Finally, when multiple predictions were made for the PIO entities, the most common prediction was used, with a random choice being made in case of a tie.
+Finally, when multiple predictions were made for the PIO entities, the most common prediction was used, with a random choice being made for ties.
 %
 %
 %
 \section{Experimental setup}
+\label{sec:exp_setup}
+%
 This section describes our experimental setup for subtasks (1) and (2), both of which were evaluated using a macro F1-score measure.
 %
 %
@@ -260,22 +271,22 @@ This section describes our experimental setup for subtasks (1) and (2), both of 
 %
 %
 \subsection{Subtask 1}
-
+\label{sec:setup_t1}
+%
 We train all Transformer-based models for 30 epochs. 
 Following task organizers, we perform splitting on whitespaces.
 We use 80\% of the dataset for training models and 20\% for validation.
 We use Flair to implement our models~\cite{Akbik2019FLAIRAE}.
 
-For subtask 1 we submit four runs which are ensembles of models described in Section \ref{sec:system1}:
+For subtask 1, we submit four runs, ensembles of models described in Section \ref{sec:system1}. The runs are described in Table \ref{tab:runs_task1}
+% \begin{itemize}
+% \item \textbf{Run 1:} QD + distilBERT$_q$ + distilBERT$_A$
+% \item \textbf{Run 2:} QD + distilBERT$_q$ + distilBERT$_{pe}$ + distilBERT$_A$
+% \item \textbf{Run 3:} QD + distilBERT$_q$ + distilBERT$_{pe}$ + RoBERTa$_A$
+% \item \textbf{Run 4:} QD + distilBERT$_q$ + distilBERT$_{pe}$ + distilBERT$_A$ + RoBERTa$_A$ 
+% \end{itemize}
 
-\begin{itemize}
-\item \textbf{Run 1:} QD + distilBERT$_q$ + distilBERT$_A$
-\item \textbf{Run 2:} QD + distilBERT$_q$ + distilBERT$_{pe}$ + distilBERT$_A$
-\item \textbf{Run 3:} QD + distilBERT$_q$ + distilBERT$_{pe}$ + RoBERTa$_A$
-\item \textbf{Run 4:} QD + distilBERT$_q$ + distilBERT$_{pe}$ + distilBERT$_A$ + RoBERTa$_A$ 
-\end{itemize}
-
-\begin{table}[]
+\begin{table}[h]
     \centering
     \begin{tabular}{lp{5cm}}
     \toprule
@@ -286,42 +297,40 @@ For subtask 1 we submit four runs which are ensembles of models described in Sec
         \textbf{Run 4} & QD + distilBERT$_q$ + distilBERT$_{pe}$ + distilBERT$_A$ + RoBERTa$_A$ \\
          \bottomrule
     \end{tabular}
-    \caption{Caption}
-    \label{tab:my_label}
+    \caption{The table outlining the model architecture utilized in four different runs for the task of causal claims detection.}
+    \label{tab:runs_task1}
 \end{table}
 
 %Run 4 is like Run 2 just adds roberta.
 %Run 3 is like Run 2 but last model is switched.
-We do the majority voting for non-null predictions, i.e. whenever at least one model predicts an entity, we give that prediction higher precedence compared to a zero-class prediction from other models.
+We do the majority voting (MV) for non-null predictions, i.e. whenever at least one model predicts an entity, we give that prediction higher precedence compared to a zero-class prediction from other models.
 When at least one model predicts the `claim’ category and at least one predicts `personal experience’ we assign to that token the `claim based on personal experience’ entity.
-We did not submit a run with distilBERT$_c$ model, as this model was not able to predict any entity correctly on a validation set.
-
+We did not submit a run with distilBERT$_c$ model, as the model was not able to predict any entity correctly on a validation set.
 %Runs are evaluated using macro F1-score measure. %Anjani: moved this sentence above as macro F1 was used for both the subtasks and was redundant. 
 %
 %
 %
 \subsection{Subtask 2}
-\label{exps:task2}
+\label{sec:setup_t2}
 %
-For the subtask 2, the experiments were conducted using PyTorch 1.10, scispaCy 0.4.0, and transformers 4.8.2.
-
+The experiments were conducted using PyTorch 1.10, scispaCy 0.4.0, and transformers 4.8.2.
 We submitted five runs with three training experiments each for PIO classes using the system components described in section~\ref{system:task2}.
-For each PIO run, the experiments were conducted and averaged over the three most common Python random seeds, 0, 1 and 42.
+For each PIO run, the experiments were conducted and averaged over the three most common Python random seeds:~0,~1 and 42.
 The dataset was divided into training (80\%) and validation sets (20\%).
 The sequence input length was 512 tokens across the experiments corresponding to the transformer input restriction.
 The dimensions for the contextual word embeddings were $\mathbf{T}^{768 \times 512}$ and for the one-hot POS embeddings were $\mathbf{P}^{18 \times 512}$.
 The dimensions for the orthographic character embeddings were $\mathbf{O}^{6 \times 20 \times 512}$ and for the character embeddings were $\mathbf{C}^{28 \times 20 \times 512}$.
-Specific architecture used for each run is described in the Table~\ref{tab:runs_task2}.
+The Table~\ref{tab:runs_task2} describes the architecture for each run.
 %
-\begin{enumerate}
-    \item \textbf{Run 1 RoBERTa-(BiLSTM+POS)-(MP(CNN)+fc): } RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
-    \item \textbf{Run 2 RoBERTa-(one-hot-POS)-(MP(CNN)+fc): } RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
-   \item \textbf{Run 3 RoBERTa-(one-hot-POS)-(GAP(CNN)+fc): } RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
-   \item \textbf{Run 4 RoBERTa-(BiLSTM+POS)-(GAP(CNN)+fc): } RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
-    \item \textbf{Run 5 Misc:} Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. 
-\end{enumerate}
+% \begin{enumerate}
+%     \item \textbf{Run 1 RoBERTa-(BiLSTM+POS)-(MP(CNN)+fc): } RoBERTa embeddings extracted from the input tokens were concatenated to BiLSTM-transformed POS embeddings to obtain a word-level representation. Character-level orthographic embeddings were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
+%     \item \textbf{Run 2 RoBERTa-(one-hot-POS)-(MP(CNN)+fc): } RoBERTa embeddings extracted from the input tokens were concatenated to one-hot encoded POS embeddings. Character vectors were CNN transformed, followed by a max pooling operation to obtain the character representation post an fc layer via ReLU.
+%    \item \textbf{Run 3 RoBERTa-(one-hot-POS)-(GAP(CNN)+fc): } RoBERTa embeddings were concatenated to one-hot encoded POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
+%    \item \textbf{Run 4 RoBERTa-(BiLSTM+POS)-(GAP(CNN)+fc): } RoBERTa embeddings were concatenated to BiLSTM transformed POS embeddings. Character-level orthographic embeddings were CNN transformed, followed by a GAP operation to obtain the character representation post an fc layer via ReLU.
+%     \item \textbf{Run 5 Misc:} Three different architectures, each corresponding to PIO classes, were used for the fifth run. For the population class prediction, the architecture was the same as in run 4, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the intervention prediction, the architecture was the same as in run 3, except RoBERTa embeddings were replaced by BioMed-RoBERTa representation. For the prediction of the outcome, only RoBERTa embeddings were extracted from the input tokens, followed by a linear layer for class prediction. 
+% \end{enumerate}
 
-\begin{table*}[]
+\begin{table*}[h]
     \centering
     \begin{tabular}{lp{13cm}}
     \toprule
@@ -336,14 +345,11 @@ Specific architecture used for each run is described in the Table~\ref{tab:runs_
     \caption{The table outlining the model architecture utilized in five different runs for the task of PIO extraction.}
     \label{tab:runs_task2}
 \end{table*}
-
-%
-
 %
 %
 %
-\section{Results}
-\label{results}
+\section{Results and Discussion}
+\label{sec:results}
 %
 %
 %
@@ -352,7 +358,11 @@ Specific architecture used for each run is described in the Table~\ref{tab:runs_
 %
 Results for our submissions in subtask 1 are presented in Table \ref{tab:task_1}. 
 Adding  distilBERT$_{pe}$ to the ensemble positively impacts Recall and this is the best of our Runs in terms of the F1-score.
+Replacing distilBERT$_A$ with RoBERTa$_A$ model (Run 3) improves the Precision by almost 4\% points, yet it decreases the overall Recall.
+When using both of these models in the ensemble, the scores on all evaluation measures decreases. 
+We believe that this was due to the usage of a naive MV approach.
 
+%
 \begin{table}[ht]
     \centering
     \begin{tabular}{cccc}
@@ -365,7 +375,7 @@ Adding  distilBERT$_{pe}$ to the ensemble positively impacts Recall and this is 
         4 & 68.73 & 62.90 & 65.70 \\
         \bottomrule
     \end{tabular}
-    \caption{Results from subtask 1. \textbf{Bold} values indicate highest score overall.}
+    \caption{Subtask 1 results on the official SemEval-2023 test set. \textbf{Bold} values indicate highest score overall.}
     \label{tab:task_1}
 \end{table}
 %
@@ -398,11 +408,21 @@ Our best F1-score for the task was placed fifth on the leaderboard, 17.91\% poin
     \label{tab:task_2}
 \end{table}
 %
+For PIO extraction, we conducted preliminary experiments using a combination of BiLSTM CRF (Conditional Random Fields), but its linear layer counterpart consistently outperformed the CRF layer.
+We suspect the reason could be using the IO tagging scheme.
+In the case of social media entities, the boundaries of these entities may be fuzzy and not well-defined.
+In this situation, using the IO tagging scheme can be more appropriate than the BIO tagging scheme.
+The IO tagging scheme only requires a single tag to mark the beginning of an entity, and all subsequent words in the entity are labelled with the same tag.
+This makes it easier to encode fuzzy boundaries and reduces the number of tags required to label the sequence.
+We used a linear rather than a CRF layer to model the dependencies between adjacent labels.
+This decision was influenced by the fact that the IO tagging scheme is better suited for a binary sequence labelling task than a sequence tagging task, better performed by CRF.
+Using a linear layer, we can model the dependencies between adjacent labels and still capture the fuzzy boundaries of social media entities.
+%
 %
 %
 \section{Conclusion}
+\label{sec:conclusion}
 %
-
 We participated in both subtasks of SemEval-2023 Task 8.
 Our submissions are mainly based on fine-tuning Transformers-based models and creating an ensemble of these models.
 Results show a positive impact of using independent models for each entity type in subtask 1.
@@ -411,8 +431,9 @@ Source code is available under the following URL: \url{https://github.com/Wojcie
 %
 %
 \section*{Limitations}
+\label{limitations}
 %
-For subtask 2, the rule-based module uses majority voting to choose the final prediction.
+For subtask 2, the rule-based module uses MV to choose the final prediction.
 MV selects the final token label supported by most of the model runs by equally weighting each run and discounting the accuracy of each model.
 The system could benefit from considering model accuracies and weighting predictions from each model to support the final prediction.
 Additionally, the final prediction aggregation scheme is stringent and selects only the label predicted by multiple voters.
